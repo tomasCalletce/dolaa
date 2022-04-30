@@ -16,5 +16,4 @@ function DataBox() {
     </Box>
   )
 }
-
 export default DataBox

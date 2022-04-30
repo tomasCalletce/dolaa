@@ -1,9 +1,9 @@
 
-import { Box , Heading, Text } from '@chakra-ui/react'
+import { Box , Heading, Text, Input, Button } from '@chakra-ui/react'
 
-import Header from './components/header'
-import DataBox from './components/dataBox'
-import ListValue from './components/listValue'
+import Header from '../components/header'
+import DataBox from '../components/dataBox'
+import ListValue from '../components/listValue'
 
 export default function Home() {
   return (
@@ -16,8 +16,12 @@ export default function Home() {
             <DataBox/>
             <DataBox/>
           </Box>
-          <Box w="100%" pl="3" pr="3">
+          <Box w="100%" pl="3" pr="3" display="flex" justifyContent="space-between" alignItems="center">
               <Text fontSize="4xl" fontWeight="hairline" >Chats Recientes</Text>
+              <Box w="30%" display="flex">
+                <Button colorScheme='teal' mr="1" >Buscar</Button>
+                <Input placeholder='Buscar' border="1px" borderColor='gray.400' />
+              </Box>
           </Box>
           <Box w="100%">
             <Box display="flex" p="3" borderBottom='1px' borderTop="1px" borderColor='gray.200'  bg='white' pr="4">

@@ -9,5 +9,4 @@ function ListValue() {
     </Box>
   )
 }
-
 export default ListValue
