@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const { Schema, model } = mongoose;
@@ -6,15 +7,15 @@ const userSchema = new Schema({
     username: String,
     email: String,
     title: String,
-    discordUsername : {
+    discordUsername: {
         type: String,
         require: true,
-     
+
     },
-    discordID : String,
+    discordID: String,
     hash: String,
     salt: String
 });
 
-const User = model('User', userSchema);
+const User = model('users', userSchema);
 module.exports = User;
