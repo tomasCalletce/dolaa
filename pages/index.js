@@ -10,9 +10,7 @@ import { useState, useEffect } from 'react'
 function searchByClient() {
 }
 async function getAllUsers() {
-  const info = await fetch('/api/getAllUsers')
-  console.log(info)
-
+   
 }
 export default function Home() {
 
@@ -21,7 +19,17 @@ export default function Home() {
   const [lastMessages, setLastMessages] = useState(0);
 
   useEffect(() => {
-    getAllUsers()
+    const get = async()=>{
+      const req = await fetch('/api/getAllUsers');
+      console.log(req)
+    const newRecent = [];
+    for(let i of req){
+      newRecent.push(<ListValue m = {i.message} />)
+    } 
+    return newRecent
+    }
+  
+    setRecent(get());
   })
 
   return (
@@ -45,9 +53,7 @@ export default function Home() {
             <Box w="60%" display="flex" justifyContent="flex-end" color="#234E52" ><Text>Staff</Text></Box>
           </Box>
           <Box w="100%" height="100%" bg="#E6FFFA" display="flex" flexDirection="column">
-            <ListValue />
-            <ListValue />
-            <ListValue />
+            {recent}
           </Box>
         </Box>
       </Box>

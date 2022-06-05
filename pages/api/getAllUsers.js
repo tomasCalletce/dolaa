@@ -3,9 +3,14 @@ const Customer = require('../../db/models/Costumer')
 
 
 export default async function handler(req, res) {
-    console.log("llego")
-    // const szs = await User.find({}).exec();
-    const customer = await Customer.find({});
-    console.log(customer)
-    res.status(200).json(customer)
+    const arr = [];
+    const customer = await Customer.find({},{"messages":{$slice: -1}})
+    console.log(customer[0].messages)
+    for (const cuto of customer) {
+        if(cuto.messages[0]){
+            arr.push(cuto.messages[0])
+        }
+    }
+    res.status(200).json(arr)
 }
+
