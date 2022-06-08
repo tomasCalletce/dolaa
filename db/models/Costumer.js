@@ -1,4 +1,4 @@
-require("../main");
+require('../main.js')
 const mongoose = require("mongoose");
 
 const { Schema, model } = mongoose;
@@ -14,6 +14,5 @@ const customerSchema = new Schema({
         }
     ]
 });
-
-const Costumer = model('costumers', customerSchema);
-module.exports = Costumer;
+const Customer = mongoose.models.costumers || model('costumers', customerSchema);
+module.exports = Customer;

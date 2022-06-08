@@ -1,4 +1,4 @@
-
+require('../main.js')
 const mongoose = require("mongoose");
 
 const { Schema, model } = mongoose;
@@ -17,5 +17,5 @@ const userSchema = new Schema({
     salt: String
 });
 
-const User = model('users', userSchema);
+const User = mongoose.models.users || model('users', userSchema);
 module.exports = User;

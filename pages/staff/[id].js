@@ -1,13 +1,33 @@
 import { useRouter } from "next/router"
 import { Box , Text, Input, Button } from '@chakra-ui/react'
+import { useState, useEffect} from 'react'
 
+// components 
 import Header from '../../components/header'
 import StaffBox from '../../components/staffBox'
 import ListValue from "../../components/listValue"
 
-function StaffMember(){
+import { connect } from 'mongoose';
+import Customer = from '../../db/models/Costumer';
+
+
+function StaffMember(props){
     const router = useRouter();
     const id = router.query.id;
+    const [clients,setClients] = useState([]);
+
+    useEffect(()=>{
+        async function fetchMyAPI() {
+            let response = await Customer({user:id});
+            console.log(response);
+          }
+          // call the function
+        const result = fetchMyAPI()
+        // make sure to catch any error
+        .catch(console.error);;
+        console.log(result)
+    },[])
+
     return (
         <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >
         <Header/>

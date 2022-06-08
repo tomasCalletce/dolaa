@@ -1,10 +1,12 @@
 
 import { Box , Text, Input, Button } from '@chakra-ui/react'
 
+// components
 import Header from '../../components/header'
 import StaffBox from '../../components/staffBox'
 
-function Staff() {
+
+function Staff({ data }) {
   return (
     <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >
       <Header/>

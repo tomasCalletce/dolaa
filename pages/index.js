@@ -1,49 +1,156 @@
 
 import { Box, Heading, Text, Input, Button } from '@chakra-ui/react'
+import React, { useState, useEffect,useRef} from 'react'
 
+// helpers
+import moment from 'moment'
+
+// components
 import Header from '../components/header'
 import DataBox from '../components/dataBox'
 import ListValue from '../components/listValue'
 
-import { useState, useEffect } from 'react'
+// db models 
+import Customer from '../db/models/Costumer'
+import User from '../db/models/User'
 
-function searchByClient() {
-}
-async function getAllUsers() {
-   
-}
-export default function Home() {
 
-  const [recent, setRecent] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [lastMessages, setLastMessages] = useState(0);
-
-  useEffect(() => {
-    const get = async()=>{
-      const req = await fetch('/api/getAllUsers');
-      console.log(req)
-    const newRecent = [];
-    for(let i of req){
-      newRecent.push(<ListValue m = {i.message} />)
-    } 
-    return newRecent
-    }
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const customerWithMesseges = []
+  const staff = []
+  let numCustomersToday = 0
+  let numCustomersWeek = 0;
+  let numCustomersLastWeek = 0;
   
-    setRecent(get());
+  const customers = await Customer.find({},{"messages":{$slice: -1}})
+  const users = await User.find({})
+
+  for (const user of users) {
+      staff.push({
+        id : user._id,
+        discordUsername : user.discordUsername
+      })
+  }
+  
+  for (const customer of customers) {
+      if(customer.messages[0]){
+        const time = moment(customer.messages[0].time)
+        const today = moment()
+        if(time.dayOfYear() === today.dayOfYear()){
+          numCustomersToday++;
+        }
+        if(time.weekYear() === today.weekYear()){
+          numCustomersWeek++;
+        }
+        if(time.weekYear() === today.weekYear()-1){
+          numCustomersLastWeek++;
+        }
+        customerWithMesseges.push(customer)
+      }
+  }
+
+  customerWithMesseges.sort((a, b) => {
+    a = moment(a.messages[0].time);
+    b = moment(b.messages[0].time);
+    if (a.isBefore(b)) {
+      return 1;
+    }
+    if (b.isBefore(a)) {
+      return -1;
+    }
+    return 0;
   })
 
+  let recentCustomers;
+  if(customerWithMesseges.length >= 15){
+    recentCustomers = customerWithMesseges.splice(0,14)
+  }else{
+    recentCustomers = customerWithMesseges;
+  }
+
+  const data = []
+
+  for (const customer of recentCustomers) {
+    const user = await User.findOne({"_id" : customer.user})
+    data.push({
+          username : user.username,
+          cellPhone : customer.cellPhone,
+          time : moment(customer.messages[0].time).toISOString() 
+    })
+  }
+
+  const returnVal = {
+    arr : data,
+    numCustomersToday,
+    numCustomersWeek,
+    numCustomersLastWeek
+  }
+
+  const parsedData = JSON.parse(JSON.stringify(returnVal))
+  
+  return { props: { data : parsedData } }
+}
+
+
+export default function Home({ data }) {
+
+  const [viewRecentMessages,setViewRecentMessages] = useState([])
+  const [recentMesseges, setRecentMesseges] = useState([])
+  const [numCustomersToday,setNumCustomersToday] = useState(0)
+  const [numCustomersWeek,setNumCustomersWeek] = useState(0)
+
+  const [numCustomersLastWeek,setNumCustomersLastWeek] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  const inputVal = useRef(0);
+
+  useEffect(()=>{
+    setNumCustomersToday(data.numCustomersToday)
+    setNumCustomersWeek(data.numCustomersWeek)
+    setNumCustomersLastWeek(data.numCustomersLastWeek)
+    const messages = data.arr.map((entry)=>{
+      return <ListValue cellPhone={entry.cellPhone} date={entry.time} userName={entry.username} />
+    })
+    setRecentMesseges(messages)
+    setViewRecentMessages(messages)
+  },[])
+
+  const buscar = ()=>{
+    const input = inputVal.current.value//.current da el valor en html
+
+    for(let i of recentMesseges){
+      console.log("Cell: " + i.props.cellPhone);
+      console.log(input);
+      if(i.props.cellPhone.includes(input)){
+        console.log("entra")
+        setViewRecentMessages(<ListValue cellPhone={i.props.cellPhone} date={i.props.time} userName={i.props.username}/>);
+      }
+    }
+    // viewRecentMessages[i].props.cellPhone;
+
+    // recentMesseges.sort(function(a,b){
+    //   // Turn your strings into dates, and then subtract them
+    //   // to get a value that is either negative, positive, or zero.
+    //   return new Date(b.props.) - new Date(a.date);
+    // });
+
+  }
+  
   return (
     <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >
       <Header />
       <Box w="100%">
         <Box w="100%" height="10vh" bg="#319795" display="flex" justifyContent="space-between" alignItems="center" pl="3" pr="3">
-          <DataBox mensajes={lastMessages} />
+          <DataBox description={"mensajes hoy"} number={numCustomersToday} />
+          <DataBox description={"mensajes esta semana"} number={numCustomersWeek} />
+          <DataBox description={"mensajes semana anterior"} number={numCustomersLastWeek} />
         </Box>
         <Box w="100%" pl="3" pr="3" display="flex" justifyContent="space-between" alignItems="center">
           <Text fontSize="4xl" fontWeight="hairline" >Chats Recientes</Text>
           <Box w="30%" display="flex">
-            <Button colorScheme='teal' mr="1" >Buscar</Button>
-            <Input placeholder='Buscar' border="1px" borderColor='gray.400' />
+            <Button colorScheme='teal' mr="1" onClick={buscar} >Buscar</Button>
+            <Input ref={inputVal} placeholder='Buscar' border="1px" borderColor='gray.400' />
           </Box>
         </Box>
         <Box w="100%">
@@ -53,7 +160,7 @@ export default function Home() {
             <Box w="60%" display="flex" justifyContent="flex-end" color="#234E52" ><Text>Staff</Text></Box>
           </Box>
           <Box w="100%" height="100%" bg="#E6FFFA" display="flex" flexDirection="column">
-            {recent}
+              {viewRecentMessages}
           </Box>
         </Box>
       </Box>
