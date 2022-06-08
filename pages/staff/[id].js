@@ -8,7 +8,7 @@ import StaffBox from '../../components/staffBox'
 import ListValue from "../../components/listValue"
 
 import { connect } from 'mongoose';
-import Customer = from '../../db/models/Costumer';
+import Customer from '../../db/models/Costumer';
 
 
 function StaffMember(props){
