@@ -16,22 +16,14 @@ import User from '../db/models/User'
 
 
 export async function getServerSideProps() {
+
   // Fetch data from external API
   const customerWithMesseges = []
-  const staff = []
   let numCustomersToday = 0
   let numCustomersWeek = 0;
   let numCustomersLastWeek = 0;
   
   const customers = await Customer.find({},{"messages":{$slice: -1}})
-  const users = await User.find({})
-
-  for (const user of users) {
-      staff.push({
-        id : user._id,
-        discordUsername : user.discordUsername
-      })
-  }
   
   for (const customer of customers) {
       if(customer.messages[0]){
@@ -120,21 +112,11 @@ export default function Home({ data }) {
     const input = inputVal.current.value//.current da el valor en html
 
     for(let i of recentMesseges){
-      console.log("Cell: " + i.props.cellPhone);
-      console.log(input);
       if(i.props.cellPhone.includes(input)){
         console.log("entra")
-        setViewRecentMessages(<ListValue cellPhone={i.props.cellPhone} date={i.props.time} userName={i.props.username}/>);
+        setViewRecentMessages(i);
       }
     }
-    // viewRecentMessages[i].props.cellPhone;
-
-    // recentMesseges.sort(function(a,b){
-    //   // Turn your strings into dates, and then subtract them
-    //   // to get a value that is either negative, positive, or zero.
-    //   return new Date(b.props.) - new Date(a.date);
-    // });
-
   }
   
   return (

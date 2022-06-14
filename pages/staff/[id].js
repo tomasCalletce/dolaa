@@ -4,12 +4,7 @@ import { useState, useEffect} from 'react'
 
 // components 
 import Header from '../../components/header'
-import StaffBox from '../../components/staffBox'
 import ListValue from "../../components/listValue"
-
-import { connect } from 'mongoose';
-import Customer from '../../db/models/Costumer';
-
 
 function StaffMember(props){
     const router = useRouter();
@@ -17,15 +12,11 @@ function StaffMember(props){
     const [clients,setClients] = useState([]);
 
     useEffect(()=>{
-        async function fetchMyAPI() {
-            let response = await Customer({user:id});
-            console.log(response);
-          }
-          // call the function
-        const result = fetchMyAPI()
-        // make sure to catch any error
-        .catch(console.error);;
-        console.log(result)
+      try {
+        
+      } catch (error) {
+        
+      }
     },[])
 
     return (

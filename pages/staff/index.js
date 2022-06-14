@@ -1,12 +1,44 @@
 
 import { Box , Text, Input, Button } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 
 // components
 import Header from '../../components/header'
 import StaffBox from '../../components/staffBox'
 
+// models 
+import User from '../../db/models/User'
 
-function Staff({ data }) {
+
+export async function getServerSideProps() {
+  const staff = []
+  const users = await User.find({})
+  
+  for (const user of users) {
+      staff.push({id:user._id,discordUsername:user.discordUsername})
+  }
+
+  const returnVal = {
+    staff : staff
+  }
+  const parsedData = JSON.parse(JSON.stringify(returnVal))
+  return { props: { data : parsedData } }
+
+}
+
+function Staff({data}) {
+
+  const [staffBoxes,setStaffBoxes] = useState([])
+
+  useEffect(()=>{
+    const staff = data.staff.map((entry)=>{
+      return (
+        <StaffBox id={entry.id} discordUsername={entry.discordUsername} />
+      )
+    })
+    setStaffBoxes(staff)
+  })
+
   return (
     <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >
       <Header/>
@@ -20,12 +52,7 @@ function Staff({ data }) {
               </Box>
           </Box>
           <Box w="100%"  bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" flexDirection="column">
-              <StaffBox/>
-              <StaffBox/>
-              <StaffBox/>
-              <StaffBox/>
-              <StaffBox/>
-              <StaffBox/>
+              {staffBoxes}
           </Box>
       </Box>
   
