@@ -11,13 +11,6 @@ function StaffMember(props){
     const id = router.query.id;
     const [clients,setClients] = useState([]);
 
-    useEffect(()=>{
-      try {
-        
-      } catch (error) {
-        
-      }
-    },[])
 
     return (
         <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >
