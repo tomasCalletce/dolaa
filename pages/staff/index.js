@@ -1,5 +1,5 @@
 
-import { Box , Text, Input, Button } from '@chakra-ui/react'
+import { Box , Text, Input, Button, Link } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 // components
@@ -31,13 +31,20 @@ function Staff({data}) {
   const [staffBoxes,setStaffBoxes] = useState([])
 
   useEffect(()=>{
+    let contador = -1
     const staff = data.staff.map((entry)=>{
+      contador++
+      console.log(entry)
       return (
-        <StaffBox id={entry.id} discordUsername={entry.discordUsername} />
+        <Link href={`/blog/${entry.id}`}>
+          <a>
+            <StaffBox id={entry.id} discordUsername={entry.discordUsername} key={contador} />
+          </a>
+        </Link>
       )
     })
     setStaffBoxes(staff)
-  })
+  },[])
 
   return (
     <Box w="100%" h="100vh" bgGradient="linear(to-b,#f9f9ff,#ebfcff)" display="flex" >

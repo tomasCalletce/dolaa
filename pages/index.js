@@ -101,8 +101,10 @@ export default function Home({ data }) {
     setNumCustomersToday(data.numCustomersToday)
     setNumCustomersWeek(data.numCustomersWeek)
     setNumCustomersLastWeek(data.numCustomersLastWeek)
+    let contador = -1
     const messages = data.arr.map((entry)=>{
-      return <ListValue cellPhone={entry.cellPhone} date={entry.time} userName={entry.username} />
+      contador++
+      return <ListValue cellPhone={entry.cellPhone} date={entry.time} userName={entry.username} key={contador} />
     })
     setRecentMesseges(messages)
     setViewRecentMessages(messages)
