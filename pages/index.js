@@ -65,10 +65,11 @@ export async function getServerSideProps() {
 
   for (const customer of recentCustomers) {
     const user = await User.findOne({"_id" : customer.user})
+    let cell = String(customer.cellPhone)
     data.push({
           username : user.username,
-          cellPhone : customer.cellPhone,
-          time : moment(customer.messages[0].time).toISOString() 
+          cellPhone : cell.slice(0,cell.length-5),
+          time : moment(customer.messages[0].time).format("dddd, MMMM Do YYYY, h:mm:ss a")
     })
   }
 
@@ -115,7 +116,6 @@ export default function Home({ data }) {
 
     for(let i of recentMesseges){
       if(i.props.cellPhone.includes(input)){
-        console.log("entra")
         setViewRecentMessages(i);
       }
     }
